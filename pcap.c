@@ -14,10 +14,10 @@ int main(int argc, char *argv[])
     int success;        /*The actual success*/
 
     const u_char *pkt_data;
-
     int cnt=0;
+    int pcnt=0;
     int idx,x,y;
-
+    
     
     /*Define the device*/
     dev = pcap_lookupdev(errbuf);
@@ -53,8 +53,8 @@ int main(int argc, char *argv[])
             return (2);
         }
         
-    /*Grab a packet*/
- while(success = pcap_next_ex(handle, &header, &pkt_data))
+    /*Grab a success*/
+    while(success = pcap_next_ex(handle, &header, &pkt_data))
     {
         if(cnt<10)
         {
@@ -85,16 +85,22 @@ int main(int argc, char *argv[])
                 printf("\nSIP address : ");
                 for(idx=30; idx<34; idx++)
                     printf("%d ",(*(pkt_data + idx) & 0xff));
+                printf("\nDPort address : ");
 
-                printf("\nDPort : ");
                 x = (*(pkt_data+34) * 256) +(*(pkt_data+35));
                 printf("%d ",x);
             
-                printf("\nSPort : ");
+                printf("\nSPort address : ");
                 x = (*(pkt_data+36) * 256) +(*(pkt_data+37));
                 printf("%d ",x);
 
-  
+                x = *(pkt_data+46) >> 4;
+                y = x *4;
+
+                printf("\n ");
+                
+                for(idx=34+y; idx<=44+y; idx++)
+                    printf("%c ", *(pkt_data + idx));       
             }
             
             printf("\n\n\n\n");
@@ -105,6 +111,8 @@ int main(int argc, char *argv[])
             break;
 
     }
+        
+
     /*print its length*/
     /*And close the session*/
     pcap_close(handle);
