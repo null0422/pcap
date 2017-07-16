@@ -14,8 +14,9 @@ int main(int argc, char *argv[])
     int success;        /*The actual success*/
 
     const u_char *pkt_data;
-    int idx;
+
     int cnt=0;
+    int idx,x,y;
 
     
     /*Define the device*/
@@ -84,7 +85,15 @@ int main(int argc, char *argv[])
                 printf("\nSIP address : ");
                 for(idx=30; idx<34; idx++)
                     printf("%d ",(*(pkt_data + idx) & 0xff));
-                
+
+                printf("\nDPort : ");
+                x = (*(pkt_data+34) * 256) +(*(pkt_data+35));
+                printf("%d ",x);
+            
+                printf("\nSPort : ");
+                x = (*(pkt_data+36) * 256) +(*(pkt_data+37));
+                printf("%d ",x);
+
   
             }
             
