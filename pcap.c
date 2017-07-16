@@ -7,12 +7,16 @@ int main(int argc, char *argv[])
     char *dev;          /*The device to sniff on*/
     char errbuf[PCAP_ERRBUF_SIZE];  /*Error string*/
     struct bpf_program fp;      /*The compiled filter*/
-    char filter_exp[] = "port 80";  /*Our netmask*/
-    bpf_u_int32 mask;       /*Our IP*/
-    bpf_u_int32 net;        /*The header that pcap gives us*/
-    struct pcap_pkthdr header;  /*The actual packet*/
-    const u_char *packet;
-    
+    char filter_exp[] = "port 80";  /*The filter expression*/
+    bpf_u_int32 mask;       /*Our netmask*/
+    bpf_u_int32 net;        /*Our IP*/
+    struct pcap_pkthdr *header; /*The header that pcap gives us*/
+    int success;        /*The actual success*/
+
+    const u_char *pkt_data;
+    int idx;
+    int cnt=0;
+
     
     /*Define the device*/
     dev = pcap_lookupdev(errbuf);
@@ -49,11 +53,43 @@ int main(int argc, char *argv[])
         }
         
     /*Grab a packet*/
-    packet = pcap_next(handle, &header);
+ while(success = pcap_next_ex(handle, &header, &pkt_data))
+    {
+        if(cnt<10)
+        {
+            printf("Packet captures %s \n", (success == 1 ? "success" : "fail"));
+            if (success) {
+                printf("Jacked a packet with length of [%d] \n", header->len);
+                int leng = header->len;
+                for (idx = 0; idx < leng; idx++) {
+                    if(*(pkt_data + idx) < 16)
+                        printf("0%x ", (*(pkt_data + idx) & 0xff));
+                    else
+                        printf("%x ", (*(pkt_data + idx) & 0xff));
+                    if(idx%16==15)
+                        printf("\n");
+                    else if(idx%16==7)
+                        printf(" ");
+                    
+                }
+                printf("\nDMac address : ");
+                for(idx=0; idx<6; idx++)
+                    printf("%x ",(*(pkt_data + idx) & 0xff));
+                printf("\nSMAC address : ");
+                for(idx=6; idx<12; idx++)
+                    printf("%x ",(*(pkt_data + idx) & 0xff));
+  
+            }
+            
+            printf("\n\n\n\n");
+            cnt++;
 
-    printf("%s \n", packet);
+        }
+        else
+            break;
+
+    }
     /*print its length*/
-    printf("Jacked a packet with length of [%d] \n", header.len);
     /*And close the session*/
     pcap_close(handle);
     return(0);
