@@ -78,6 +78,13 @@ int main(int argc, char *argv[])
                 printf("\nSMAC address : ");
                 for(idx=6; idx<12; idx++)
                     printf("%x ",(*(pkt_data + idx) & 0xff));
+                printf("\nDIP address : ");
+                for(idx=26; idx<30; idx++)
+                    printf("%d ",(*(pkt_data + idx) & 0xff));
+                printf("\nSIP address : ");
+                for(idx=30; idx<34; idx++)
+                    printf("%d ",(*(pkt_data + idx) & 0xff));
+                
   
             }
             
