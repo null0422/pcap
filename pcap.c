@@ -93,7 +93,10 @@ int main(int argc, char *argv[])
             inet_ntop(AF_INET, &src_ip, src_ip_str, 24);
             inet_ntop(AF_INET, &dst_ip, dst_ip_str, 24);
 
-            printf("\nDIP address : ");
+            printf("\nS-IP: %s ",&(src_ip_str));
+            printf("\nD-IP : %s ",&(dst_ip_str));
+
+/*            printf("\nDIP address : ");
             for(idx=26; idx<30; idx++)
                 printf("%d ",(*(pkt_data + idx) & 0xff));
             printf("\nSIP address : ");
@@ -110,7 +113,7 @@ int main(int argc, char *argv[])
 
             x = *(pkt_data+46) >> 4;
             y = x *4;
-
+*/
             printf("\n ");
             
             for(idx=34+y; idx<=44+y; idx++)
