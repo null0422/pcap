@@ -57,56 +57,65 @@ int main(int argc, char *argv[])
     while(success = pcap_next_ex(handle, &header, &pkt_data))
     {
         if(cnt<10)
-        {
+        
             printf("Packet captures %s \n", (success == 1 ? "success" : "fail"));
-            if (success) {
-                printf("Jacked a packet with length of [%d] \n", header->len);
-                int leng = header->len;
-                for (idx = 0; idx < leng; idx++) {
-                    if(*(pkt_data + idx) < 16)
-                        printf("0%x ", (*(pkt_data + idx) & 0xff));
-                    else
-                        printf("%x ", (*(pkt_data + idx) & 0xff));
-                    if(idx%16==15)
-                        printf("\n");
-                    else if(idx%16==7)
-                        printf(" ");
-                    
-                }
-                printf("\nDMac address : ");
-                for(idx=0; idx<6; idx++)
-                    printf("%x ",(*(pkt_data + idx) & 0xff));
-                printf("\nSMAC address : ");
-                for(idx=6; idx<12; idx++)
-                    printf("%x ",(*(pkt_data + idx) & 0xff));
-                printf("\nDIP address : ");
-                for(idx=26; idx<30; idx++)
-                    printf("%d ",(*(pkt_data + idx) & 0xff));
-                printf("\nSIP address : ");
-                for(idx=30; idx<34; idx++)
-                    printf("%d ",(*(pkt_data + idx) & 0xff));
-                printf("\nDPort address : ");
-
-                x = (*(pkt_data+34) * 256) +(*(pkt_data+35));
-                printf("%d ",x);
-            
-                printf("\nSPort address : ");
-                x = (*(pkt_data+36) * 256) +(*(pkt_data+37));
-                printf("%d ",x);
-
-                x = *(pkt_data+46) >> 4;
-                y = x *4;
-
-                printf("\n ");
+            printf("Jacked a packet with length of [%d] \n", header->len);
+            int leng = header->len;
+            for (idx = 0; idx < leng; idx++) {
+                if(*(pkt_data + idx) < 16)
+                    printf("0%x ", (*(pkt_data + idx) & 0xff));
+                else
+                    printf("%x ", (*(pkt_data + idx) & 0xff));
+                if(idx%16==15)
+                    printf("\n");
+                else if(idx%16==7)
+                    printf(" ");
                 
-                for(idx=34+y; idx<=44+y; idx++)
-                    printf("%c ", *(pkt_data + idx));       
             }
+            printf("\nDMac address : ");
+            for(idx=0; idx<6; idx++)
+                printf("%x ",(*(pkt_data + idx) & 0xff));
+            printf("\nSMAC address : ");
+            for(idx=6; idx<12; idx++)
+                printf("%x ",(*(pkt_data + idx) & 0xff));
+
+            struct ip *ip_hdr;
+            struct tcphdr *tcph;
+
+            ep = (struct ether_header *)pkt_data;
+            int ip_hdr_len = ip_hdr->ip_hl * 4;
+
+            ip_hdr = (pkt_data + sizeof(struct ether_header));
+            tcph = (pkt_data + sizeof(struct ether_header) + ip_hdr_len);
+            
+            printf("\nDIP address : ");
+            for(idx=26; idx<30; idx++)
+                printf("%d ",(*(pkt_data + idx) & 0xff));
+            printf("\nSIP address : ");
+            for(idx=30; idx<34; idx++)
+                printf("%d ",(*(pkt_data + idx) & 0xff));
+            printf("\nDPort address : ");
+
+            x = (*(pkt_data+34) * 256) +(*(pkt_data+35));
+            printf("%d ",x);
+        
+            printf("\nSPort address : ");
+            x = (*(pkt_data+36) * 256) +(*(pkt_data+37));
+            printf("%d ",x);
+
+            x = *(pkt_data+46) >> 4;
+            y = x *4;
+
+            printf("\n ");
+            
+            for(idx=34+y; idx<=44+y; idx++)
+                printf("%c ", *(pkt_data + idx));       
+          
             
             printf("\n\n\n\n");
             cnt++;
 
-        }
+        
         else
             break;
 
