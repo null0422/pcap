@@ -1,5 +1,15 @@
-#include<pcap.h>
-#include<stdio.h>
+#include <stdio.h>
+#include <pcap.h>
+#include <stdlib.h>
+#include <netinet/in.h>
+#include <ctype.h>
+#include <netinet/if_ether.h>
+#include <netinet/ip.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netinet/tcp.h>
+#include <stdint.h>
+
 
 int main(int argc, char *argv[])
 {
@@ -57,7 +67,7 @@ int main(int argc, char *argv[])
     while(success = pcap_next_ex(handle, &header, &pkt_data))
     {
         if(cnt<10)
-        
+        {
             printf("Packet captures %s \n", (success == 1 ? "success" : "fail"));
             printf("Jacked a packet with length of [%d] \n", header->len);
             int leng = header->len;
@@ -81,12 +91,17 @@ int main(int argc, char *argv[])
 
             struct ip *ip_hdr;
             struct tcphdr *tcph;
+            struct ether_header *ep;
+            unsigned short ether_type;
 
             ep = (struct ether_header *)pkt_data;
             int ip_hdr_len = ip_hdr->ip_hl * 4;
 
             ip_hdr = (pkt_data + sizeof(struct ether_header));
             tcph = (pkt_data + sizeof(struct ether_header) + ip_hdr_len);
+
+            struct in_addr src_ip = ip_hdr->ip_src;
+            struct in_addr dst_ip = ip_hdr->ip_dst;
 
             char src_ip_str[25];
             char dst_ip_str[25];
@@ -126,7 +141,7 @@ int main(int argc, char *argv[])
             
             printf("\n\n\n\n");
             cnt++;
-
+        }
         else
             break;
 
