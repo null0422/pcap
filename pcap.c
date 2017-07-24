@@ -96,6 +96,9 @@ int main(int argc, char *argv[])
             printf("\nS-IP: %s ",&(src_ip_str));
             printf("\nD-IP : %s ",&(dst_ip_str));
 
+
+            printf("\nS-Port : %d", ntohs(tcph->th_sport));
+            printf("\nD-Port : %d", ntohs(tcph->th_dport));
 /*            printf("\nDIP address : ");
             for(idx=26; idx<30; idx++)
                 printf("%d ",(*(pkt_data + idx) & 0xff));
