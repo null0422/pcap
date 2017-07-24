@@ -87,7 +87,12 @@ int main(int argc, char *argv[])
 
             ip_hdr = (pkt_data + sizeof(struct ether_header));
             tcph = (pkt_data + sizeof(struct ether_header) + ip_hdr_len);
-            
+
+            char src_ip_str[25];
+            char dst_ip_str[25];
+            inet_ntop(AF_INET, &src_ip, src_ip_str, 24);
+            inet_ntop(AF_INET, &dst_ip, dst_ip_str, 24);
+
             printf("\nDIP address : ");
             for(idx=26; idx<30; idx++)
                 printf("%d ",(*(pkt_data + idx) & 0xff));
