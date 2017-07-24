@@ -99,6 +99,7 @@ int main(int argc, char *argv[])
 
             printf("\nS-Port : %d", ntohs(tcph->th_sport));
             printf("\nD-Port : %d", ntohs(tcph->th_dport));
+            printf("\n ");
 /*            printf("\nDIP address : ");
             for(idx=26; idx<30; idx++)
                 printf("%d ",(*(pkt_data + idx) & 0xff));
@@ -117,24 +118,19 @@ int main(int argc, char *argv[])
             x = *(pkt_data+46) >> 4;
             y = x *4;
 */
-            printf("\n ");
-            
-            for(idx=34+y; idx<=44+y; idx++)
-                printf("%c ", *(pkt_data + idx));       
-          
+            int tcp_hdr_len = tcph->th_off * 4;
+            int offset = sizeof(struct ether_header) + ip_hdr_len + tcp_hdr_len;
+
+            for(idx=offset; idx<=header->len; idx++)
+                printf("%c", *(pkt_data + idx));        
             
             printf("\n\n\n\n");
             cnt++;
 
-        
         else
             break;
 
     }
-        
-
-    /*print its length*/
-    /*And close the session*/
     pcap_close(handle);
     return(0);
 }       
